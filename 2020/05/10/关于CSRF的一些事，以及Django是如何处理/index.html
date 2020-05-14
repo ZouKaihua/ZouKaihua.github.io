@@ -93,7 +93,7 @@
 <p>举个例子，用户S登录网站F，然后未注销退出，网站保留了用户S的登录信息。期间，用户S又登录了风险网站R，网站R通过表单，参数和网站F对应，且在用户S提交网站R的表单后，实际提交地址却是网站F的地址。这样，就在用户S不知情的情况下，网站R通过用户S在网站F的登录信息，完成了风险请求操作。</p>
 <p>这就是CSRF。</p>
 <h2 id="一般的几种解决方案"><a href="#一般的几种解决方案" class="headerlink" title="一般的几种解决方案"></a>一般的几种解决方案</h2><p>下面说说常用的几种防御策略</p>
-<h2 id="验证请求头Referer字段"><a href="#验证请求头Referer字段" class="headerlink" title="验证请求头Referer字段"></a>验证请求头Referer字段</h2><p>根据http协议，该请求头字段会携带上一次的访问地址信息，一般来说，完成登录后的操作，肯定是基于登录前一些工作，这样就会默认带上站点信息，如referer: <a href="https://blog.zoukaihua.com/，这样便可以确认请求是否来自自己的网站，如果是其他网站，便可以认为属于CSRF攻击。" target="_blank" rel="noopener">https://blog.zoukaihua.com/，这样便可以确认请求是否来自自己的网站，如果是其他网站，便可以认为属于CSRF攻击。</a></p>
+<h2 id="验证请求头Referer字段"><a href="#验证请求头Referer字段" class="headerlink" title="验证请求头Referer字段"></a>验证请求头Referer字段</h2><p>根据http协议，该请求头字段会携带上一次的访问地址信息，一般来说，完成登录后的操作，肯定是基于登录前一些工作，这样就会默认带上站点信息，如<br>referer: <a href="https://blog.zoukaihua.com/" target="_blank" rel="noopener" title="ZouKaihua&#39;s Writing Board">https://blog.zoukaihua.com/</a><br>这样便可以确认请求是否来自自己的网站，如果是其他网站，便可以认为属于CSRF攻击。</p>
 <p>但是，这种处理方法有不足的地方，一些老的浏览器或请求工具可以更改请求头字段，另外，由于隐私问题，一些浏览器可能会允许用户禁用该字段，以防止追踪。</p>
 <h2 id="请求或表单，加入token"><a href="#请求或表单，加入token" class="headerlink" title="请求或表单，加入token"></a>请求或表单，加入token</h2><p>网站随机生成一个token，服务器保存，同时将该值返给前端页面，可以拼接到请求地址、请求头、以及隐藏在提交表单中，这样，在请求发到网站服务器后，通过匹对，便可以确认是否存在CSRF攻击。</p>
 <p>这种方案，在前后端分离的情况需要做一些更改。</p>
