@@ -1,0 +1,174 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="google-site-verification" content="" />
+  
+  <title>写一个Django插件-上传处理Excel文件</title>
+  <meta name="author" content="ZouKaihua">
+  <meta name="description" content="邹凯华的写字板，技术，心情分享^_^">
+  
+  
+  <meta property="og:title" content="写一个Django插件-上传处理Excel文件"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:site_name" content="ZouKaihua&#39;s Writing Board"/>
+  <link href="/apple-touch-icon-precomposed.png" sizes="180x180" rel="apple-touch-icon-precomposed">
+  <link rel="alternate" href="/atom.xml" title="ZouKaihua&#39;s Writing Board" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/m.min.css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <a id="top"></a>
+  <div id="main">
+    <div class="main-ctnr">
+      <div class="behind">
+  <a href="/" class="back black-color">
+    <svg class="i-close" viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+        <path d="M2 30 L30 2 M30 30 L2 2"></path>
+    </svg>
+  </a>
+  <div class="description">
+    &nbsp;
+  </div>
+</div>
+
+
+  <article class="standard post">
+    <div class="title">
+      
+  
+    <h1 class="page-title center">
+        写一个Django插件-上传处理Excel文件
+    </h1>
+  
+
+
+    </div>
+    <div class="meta center">
+      <time datetime="2020-05-08T14:41:40.000Z" itemprop="datePublished">
+  <svg class="i-calendar" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+    <path d="M2 6 L2 30 30 30 30 6 Z M2 15 L30 15 M7 3 L7 9 M13 3 L13 9 M19 3 L19 9 M25 3 L25 9"></path>
+  </svg>
+  &nbsp;
+  2020-05-08
+</time>
+
+
+    
+    &nbsp;
+    <svg class="i-tag" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+      <circle cx="24" cy="8" r="2"></circle>
+      <path d="M2 18 L18 2 30 2 30 14 14 30 Z"></path>
+    </svg>
+    &nbsp;
+    <a href="/categories/Python/">Python</a>
+
+
+
+
+    
+    &nbsp;
+    <svg class="i-tag" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+      <circle cx="24" cy="8" r="2"></circle>
+      <path d="M2 18 L18 2 30 2 30 14 14 30 Z"></path>
+    </svg>
+    &nbsp;
+    <a href="/tags/Django/">Django</a>
+
+
+    </div>
+    <hr>
+    
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#原因"><span class="toc-text">原因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Django-admin-分析"><span class="toc-text">Django admin 分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#第一步，选择具体放置位置"><span class="toc-text">第一步，选择具体放置位置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#第二步，实现模板页面"><span class="toc-text">第二步，实现模板页面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#第三步，实现视图功能"><span class="toc-text">第三步，实现视图功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后一步，控制页面和展示"><span class="toc-text">最后一步，控制页面和展示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意"><span class="toc-text">注意</span></a></li></ol>
+    
+    <div class="picture-container">
+      
+    </div>
+    <h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>最近在做一个小的个人项目，经常需要更新数据，数据来自三方平台，数据形式主要以xls文件为主，由平台自助导出，格式和抬头较为固定，受不了一个个再导入自己平台，于是想着做一个插件，上传自动处理。</p>
+<h2 id="Django-admin-分析"><a href="#Django-admin-分析" class="headerlink" title="Django admin 分析"></a>Django admin 分析</h2><p>django自带模板引擎，而它的admin后台也完全基于此开发。最主要的，所有的布局和页面都模块化，所以新加的自定义页面可以放到特定模块，在特定区域展示。</p>
+<p>注：个人直接改源码，不是很建议</p>
+<h2 id="第一步，选择具体放置位置"><a href="#第一步，选择具体放置位置" class="headerlink" title="第一步，选择具体放置位置"></a>第一步，选择具体放置位置</h2><p>当然是找到上传入口放在何处比较合适，我觉得放到列表页的工具块比较好，即 增加 的左边。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;% block object-tools %&#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">ul</span> <span class="attr">class</span>=<span class="string">"object-tools"</span>&gt;</span></span><br><span class="line">    &#123;% include  "admin/init_html/import_excel_file.html" %&#125;  <span class="comment">&lt;!-- 个人新增页面 --&gt;</span></span><br><span class="line">    &#123;% block object-tools-items %&#125;</span><br><span class="line">    &#123;% change_list_object_tools %&#125;</span><br><span class="line">    &#123;% endblock %&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">&#123;% endblock %&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="第二步，实现模板页面"><a href="#第二步，实现模板页面" class="headerlink" title="第二步，实现模板页面"></a>第二步，实现模板页面</h2><p>实现上一步的自定义页面。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">&#123;% if import_excel_file_handler_reverse_url %&#125;</span><br><span class="line">&#123;% load static %&#125;</span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"&#123;% static "</span><span class="attr">admin</span>/<span class="attr">js</span>/<span class="attr">vendor</span>/<span class="attr">jquery</span>/<span class="attr">jquery.min.js</span>" %&#125;"&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    $(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">        $(<span class="string">'#import_excel_file_button'</span>).bind(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span></span><br><span class="line">            e.preventDefault();</span><br><span class="line"><span class="javascript">            <span class="keyword">var</span> excel_file = $(<span class="string">"#import_excel_file"</span>)[<span class="number">0</span>].files[<span class="number">0</span>];</span></span><br><span class="line">            if (!excel_file)&#123;</span><br><span class="line"><span class="actionscript">                alert(<span class="string">'请选择文件'</span>);</span></span><br><span class="line"><span class="actionscript">                <span class="keyword">return</span> <span class="literal">false</span>;</span></span><br><span class="line">            &#125;</span><br><span class="line"><span class="actionscript">            <span class="keyword">var</span> formData = <span class="keyword">new</span> FormData();</span></span><br><span class="line"><span class="actionscript">            formData.append(<span class="string">'excel_file'</span>, excel_file);</span></span><br><span class="line"><span class="actionscript">            formData.append(<span class="string">'csrfmiddlewaretoken'</span>, <span class="string">'&#123;&#123; csrf_token &#125;&#125;'</span>);</span></span><br><span class="line"><span class="javascript">            $.ajax(&#123;</span></span><br><span class="line"><span class="actionscript">                url: <span class="string">"&#123;&#123; import_excel_file_handler_reverse_url &#125;&#125;"</span>,</span></span><br><span class="line"><span class="actionscript">                contentType: <span class="literal">false</span>,</span></span><br><span class="line"><span class="actionscript">                processData: <span class="literal">false</span>,</span></span><br><span class="line"><span class="javascript">                <span class="keyword">async</span>: <span class="literal">true</span>,</span></span><br><span class="line">                data: formData,</span><br><span class="line"><span class="actionscript">                type: <span class="string">"POST"</span>,</span></span><br><span class="line"><span class="actionscript">                success: <span class="function"><span class="keyword">function</span> <span class="params">(result)</span> </span>&#123;</span></span><br><span class="line"><span class="actionscript">                    alert(result[<span class="string">'detail'</span>]);</span></span><br><span class="line"><span class="actionscript">                    <span class="keyword">if</span> (result[<span class="string">'is_valid'</span>] === <span class="string">'1'</span>)&#123;</span></span><br><span class="line"><span class="javascript">                        <span class="built_in">window</span>.location.href = <span class="string">'.'</span>;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line"><span class="actionscript">                error: <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123;</span></span><br><span class="line"><span class="actionscript">                    alert(<span class="string">'上传处理失败'</span>);</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>  <span class="comment">&lt;!-- 该li标签需要，观察上一步代码 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">""</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">enctype</span>=<span class="string">"multipart/form-data"</span> <span class="attr">style</span>=<span class="string">"margin-top: -5px"</span>&gt;</span></span><br><span class="line">        &#123;% csrf_token %&#125;</span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"file"</span> <span class="attr">id</span>=<span class="string">"import_excel_file"</span> <span class="attr">name</span>=<span class="string">"excel_file"</span> <span class="attr">value</span>=<span class="string">"请上传Excel文件"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">"import_excel_file_button"</span> <span class="attr">type</span>=<span class="string">"submit"</span>&gt;</span>上传<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">&#123;% endif %&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="第三步，实现视图功能"><a href="#第三步，实现视图功能" class="headerlink" title="第三步，实现视图功能"></a>第三步，实现视图功能</h2><p>接下来，视图功能实现。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> xlrd</span><br><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> JsonResponse</span><br><span class="line"><span class="keyword">from</span> tool.models <span class="keyword">import</span> ItemInfoExtractorModel</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">excel_import_handler</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> (request.user <span class="keyword">and</span> request.user.is_staff <span class="keyword">and</span> request.user.is_active):</span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">'is_valid'</span>: <span class="string">'0'</span>, <span class="string">'detail'</span>: <span class="string">'上传处理失败'</span>, <span class="string">'data'</span>: &#123;&#125;&#125;)</span><br><span class="line">    </span><br><span class="line">    excel_file = request.FILES.get(<span class="string">'excel_file'</span>)</span><br><span class="line">    <span class="keyword">if</span> excel_file.name.rsplit(<span class="string">'.'</span>, <span class="number">1</span>)[<span class="number">-1</span>] <span class="keyword">not</span> <span class="keyword">in</span> (<span class="string">'xlsx'</span>, <span class="string">'xls'</span>):</span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">'is_valid'</span>: <span class="string">'0'</span>, <span class="string">'detail'</span>: <span class="string">'上传处理失败'</span>, <span class="string">'data'</span>: &#123;&#125;&#125;)</span><br><span class="line"></span><br><span class="line">    temp_file = <span class="string">'/tmp/temp_file_&#123;&#125;_&#123;&#125;'</span>.format(str(uuid.uuid1()).split(<span class="string">'-'</span>, <span class="number">1</span>)[<span class="number">0</span>], excel_file.name)</span><br><span class="line">    <span class="keyword">with</span> open(temp_file, <span class="string">'wb'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> excel_file.chunks():</span><br><span class="line">            f.write(_)</span><br><span class="line"></span><br><span class="line">    data = xlrd.open_workbook(temp_file)  <span class="comment"># xlrd这个包比较久远，但可以处理xls，所以选择</span></span><br><span class="line">    table = data.sheets()[<span class="number">0</span>]</span><br><span class="line">    headline = table.row_values(<span class="number">0</span>)</span><br><span class="line">    title = headline.index(<span class="string">'名称'</span>)</span><br><span class="line">    url = headline.index(<span class="string">'链接地址'</span>)</span><br><span class="line"></span><br><span class="line">    _bulk_objs = []</span><br><span class="line">    <span class="keyword">for</span> row <span class="keyword">in</span> range(<span class="number">1</span>, table.nrows):</span><br><span class="line">        row_line = table.row_values(row)</span><br><span class="line">        _bulk_objs.append(</span><br><span class="line">            ItemInfoExtractorModel(</span><br><span class="line">                title=row_line[title],</span><br><span class="line">                url=row_line[url]</span><br><span class="line">            )</span><br><span class="line">        )</span><br><span class="line">    ItemInfoExtractorModel.objects.bulk_create(_bulk_objs)</span><br><span class="line">    os.remove(temp_file)</span><br><span class="line">    <span class="keyword">return</span> JsonResponse(&#123;<span class="string">'is_valid'</span>: <span class="string">'1'</span>, <span class="string">'detail'</span>: <span class="string">'上传处理成功'</span>, <span class="string">'data'</span>: &#123;&#125;&#125;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="最后一步，控制页面和展示"><a href="#最后一步，控制页面和展示" class="headerlink" title="最后一步，控制页面和展示"></a>最后一步，控制页面和展示</h2><p>在需要的地方放置上传入口，以及控制是否展现。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import_excel_file_handler_reverse_url = <span class="string">'/adminapi/v1/excel'</span></span><br></pre></td></tr></table></figure>
+
+<p>上面这条语句做了一个多功能处理，同时指明文件上传url，放到对应的注册admin中即可。</p>
+<p>是否展现，需要上下文环境参数动态传递，这里选择重写admin中的changelist_view。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">changelist_view</span><span class="params">(self, request, extra_context=None)</span>:</span></span><br><span class="line">        context = extra_context <span class="keyword">or</span> &#123;&#125;</span><br><span class="line">        context[<span class="string">'import_excel_file_handler_reverse_url'</span>] = self.import_excel_file_handler_reverse_url</span><br><span class="line">        <span class="keyword">return</span> super(ItemInfoExtractorAdmin, self).changelist_view(request, extra_context=context)</span><br></pre></td></tr></table></figure>
+
+<p>好了，在所有页面都可以处理了，<br>只需更改import_excel_file_handler_reverse_url，<br>以及它对应的视图函数即可。</p>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>因为个人使用，所以一些异常情况未做过多处理，需小心食用</p>
+
+
+  </article>
+  </script>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <div class="busuanzi center">
+    <!--页阅读量:&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;・&nbsp;
+    站访问量:&nbsp;<span id="busuanzi_value_site_pv"></span>&nbsp;・&nbsp;
+    站访客数:&nbsp;<span id="busuanzi_value_site_uv"></span>-->
+  </div>
+
+
+    
+
+
+
+
+
+    </div>
+  </div>
+  <footer class="page-footer"><div class="clearfix">
+</div>
+<div class="right-foot">
+    <div class="firstrow">
+        <a href="#top" target="_self">
+        <svg class="i-caret-right" viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+            <path d="M10 30 L26 16 10 2 Z"></path>
+        </svg>
+        </a>
+        ©ZouKaihua 2020
+    </div>
+    <div class="secondrow">
+        <a href="https://blog.zoukaihua.com" target="_blank" rel="noopener">
+        
+        </a>
+    </div>
+</div>
+<div class="clearfix">
+</div>
+</footer>
+  <script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+// disqus scripts
+
+
+// dropdown scripts
+$(".dropdown").click(function(event) {
+  var current = $(this);
+  event.stopPropagation();
+  $(current).children(".dropdown-content")[($(current).children(".dropdown-content").hasClass("open"))?'removeClass':'addClass']("open")
+});
+$(document).click(function(){
+    $(".dropdown-content").removeClass("open");
+})
+
+
+</script>
+
+</body>
+</html>
