@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="google-site-verification" content="" />
+  
+  <title>由Django的3-6权限管理表，重新审视用户账号表设计</title>
+  <meta name="author" content="ZouKaihua">
+  <meta name="description" content="邹凯华的写字板，技术，心情分享^_^">
+  
+  
+  <meta property="og:title" content="由Django的3-6权限管理表，重新审视用户账号表设计"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:site_name" content="ZouKaihua&#39;s Writing Board"/>
+  <link href="/apple-touch-icon-precomposed.png" sizes="180x180" rel="apple-touch-icon-precomposed">
+  <link rel="alternate" href="/atom.xml" title="ZouKaihua&#39;s Writing Board" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/m.min.css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <a id="top"></a>
+  <div id="main">
+    <div class="main-ctnr">
+      <div class="behind">
+  <a href="/" class="back black-color">
+    <svg class="i-close" viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+        <path d="M2 30 L30 2 M30 30 L2 2"></path>
+    </svg>
+  </a>
+  <div class="description">
+    &nbsp;
+  </div>
+</div>
+
+
+  <article class="standard post">
+    <div class="title">
+      
+  
+    <h1 class="page-title center">
+        由Django的3-6权限管理表，重新审视用户账号表设计
+    </h1>
+  
+
+
+    </div>
+    <div class="meta center">
+      <time datetime="2020-05-13T14:26:37.000Z" itemprop="datePublished">
+  <svg class="i-calendar" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+    <path d="M2 6 L2 30 30 30 30 6 Z M2 15 L30 15 M7 3 L7 9 M13 3 L13 9 M19 3 L19 9 M25 3 L25 9"></path>
+  </svg>
+  &nbsp;
+  2020-05-13
+</time>
+
+
+    
+    &nbsp;
+    <svg class="i-tag" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+      <circle cx="24" cy="8" r="2"></circle>
+      <path d="M2 18 L18 2 30 2 30 14 14 30 Z"></path>
+    </svg>
+    &nbsp;
+    <a href="/categories/数据库/">数据库</a>
+
+
+
+
+
+    </div>
+    <hr>
+    
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#背景"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#情景一"><span class="toc-text">情景一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#情景二"><span class="toc-text">情景二</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#情景三"><span class="toc-text">情景三</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结语"><span class="toc-text">结语</span></a></li></ol>
+    
+    <div class="picture-container">
+      
+    </div>
+    <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>Django自带一套权限管理设计，主要由3张表，再衍生3张表，</p>
+<p>即用户，分组，权限，用户-权限，用户-分组，分组-权限，这6张表实现完成的。</p>
+<p>从新思考，自己系统设计是不是也会类似操作？对系统来说，需要持久追踪用户，都会对用户进行账号设计。</p>
+<h2 id="情景一"><a href="#情景一" class="headerlink" title="情景一"></a>情景一</h2><p>最简单的账号表设计，可能就是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-- 账号表</span><br><span class="line">id</span><br><span class="line">username</span><br><span class="line">password</span><br></pre></td></tr></table></figure>
+
+
+<p>随着业务发展，可能会新加很多字段，比如，登录时间和IP，变成</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-- 账号表</span><br><span class="line">id</span><br><span class="line">username</span><br><span class="line">password</span><br><span class="line">login_time</span><br><span class="line">login_ip</span><br></pre></td></tr></table></figure>
+
+<h2 id="情景二"><a href="#情景二" class="headerlink" title="情景二"></a>情景二</h2><p>OAuth2.0以及手机短信验证码的普及，出现了三方平台账号可用于登录，系统可能会出现，平台和三方两张表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-- 平台账号表</span><br><span class="line">id</span><br><span class="line">username</span><br><span class="line">password</span><br><span class="line">phone</span><br><span class="line">...  -- 以及一些其他信息字段</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-- 三方账号表</span><br><span class="line">id</span><br><span class="line">user_id  -- 联系平台账号表主键</span><br><span class="line">source_type  -- 微信，QQ，微博等不同平台账号类型</span><br><span class="line">open_id  -- 三方平台对外的用户唯一标识</span><br><span class="line">access_token  -- 三方平台临时性辅助认证串</span><br></pre></td></tr></table></figure>
+
+<h2 id="情景三"><a href="#情景三" class="headerlink" title="情景三"></a>情景三</h2><p>也就是说，用户在登录的时候，选择登录类型，如果是手机，则进入平台账号表，否则进入三方账号表</p>
+<p>但是，会发现两表之间是有主副之分的，即从三方账号表登录后，从平台账号表查询基本信息，如名称，但是作为登录方式，应该是平行的，最多选择系统手机登录作为默认而已。试着转变一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-- 用户表</span><br><span class="line">id</span><br><span class="line">username</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-- 账号表</span><br><span class="line">id</span><br><span class="line">user_id  -- 联系用户表主键</span><br><span class="line">source_type  -- 手机，微信，QQ，微博等不同平台账号类型</span><br><span class="line">open_id  -- 手机号码，以及三方平台对外的用户唯一标识</span><br><span class="line">access_token  -- 手机验证码或者密码，三方平台临时性辅助认证串</span><br></pre></td></tr></table></figure>
+
+<p>这样登录方式将是平行的，经过账号表登录后，通过user_id获取用户表信息。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>其实，按照Django设计逻辑，这块可能是三张表，会多出一张平台表，即source_type应该也进行抽离，但是实际业务中，接入的三方平台一般会是主流平台，不会接入和改动太多，不像Django的用户、权限以及分组波动变化大，故可直接在账号表中加入source_type用来标识平台。</p>
+<p>没有绝对合适的模式，只是寻找一种解决问题更好的方式，就像设计模式一样，可能会覆盖到很多应用开发场景，但是，联系实际业务，是否一定能从设计模式找到对标方案，有待考究，但是对事物本质的抽离，却是相通的。</p>
+
+
+  </article>
+  </script>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <div class="busuanzi center">
+    <!--页阅读量:&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;・&nbsp;
+    站访问量:&nbsp;<span id="busuanzi_value_site_pv"></span>&nbsp;・&nbsp;
+    站访客数:&nbsp;<span id="busuanzi_value_site_uv"></span>-->
+  </div>
+
+
+    
+
+
+
+
+
+    </div>
+  </div>
+  <footer class="page-footer"><div class="clearfix">
+</div>
+<div class="right-foot">
+    <div class="firstrow">
+        <a href="#top" target="_self">
+        <svg class="i-caret-right" viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+            <path d="M10 30 L26 16 10 2 Z"></path>
+        </svg>
+        </a>
+        ©ZouKaihua 2020
+    </div>
+    <div class="secondrow">
+        <a href="https://blog.zoukaihua.com" target="_blank" rel="noopener">
+        
+        </a>
+    </div>
+</div>
+<div class="clearfix">
+</div>
+</footer>
+  <script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+// disqus scripts
+
+
+// dropdown scripts
+$(".dropdown").click(function(event) {
+  var current = $(this);
+  event.stopPropagation();
+  $(current).children(".dropdown-content")[($(current).children(".dropdown-content").hasClass("open"))?'removeClass':'addClass']("open")
+});
+$(document).click(function(){
+    $(".dropdown-content").removeClass("open");
+})
+
+
+</script>
+
+</body>
+</html>
