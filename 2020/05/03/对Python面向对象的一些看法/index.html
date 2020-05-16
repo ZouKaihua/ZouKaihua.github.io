@@ -84,14 +84,14 @@
     </div>
     <hr>
     
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是面向对象"><span class="toc-text">什么是面向对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#C，真的不是面向对象"><span class="toc-text">C，真的不是面向对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于C的Python底层实现"><span class="toc-text">基于C的Python底层实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#回归本质"><span class="toc-text">回归本质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受"><span class="toc-text">感受</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是面向对象"><span class="toc-text">什么是面向对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#C，真的不是面向对象吗"><span class="toc-text">C，真的不是面向对象吗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于C的Python底层实现"><span class="toc-text">基于C的Python底层实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#回归本质"><span class="toc-text">回归本质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#感受"><span class="toc-text">感受</span></a></li></ol>
     
     <div class="picture-container">
       
     </div>
     <h2 id="什么是面向对象"><a href="#什么是面向对象" class="headerlink" title="什么是面向对象"></a>什么是面向对象</h2><p>一般对事物的认知，都会对事物相关个体进行归纳统计，包括关系和属性，然后进行抽象统一，获得事物的最主要特征，也就有了事物归类的前提和依据。</p>
 <p>程序业界对什么是面向对象，会提及封装、继承和多态，我觉得这是对程序的一种认知和抽象，不是程序编写范式，而是一种思想或者方法论。</p>
-<h2 id="C，真的不是面向对象"><a href="#C，真的不是面向对象" class="headerlink" title="C，真的不是面向对象"></a>C，真的不是面向对象</h2><p>在说Python之前，先说说C，C的地位，不管外界喧嚣，至少很长一段时间都是无冕之王。但很多人对它的诟病，挥之不去的肯定有，不是面向对象，是一种面向过程的编程语言！</p>
+<h2 id="C，真的不是面向对象吗"><a href="#C，真的不是面向对象吗" class="headerlink" title="C，真的不是面向对象吗"></a>C，真的不是面向对象吗</h2><p>在说Python之前，先说说C，C的地位，不管外界喧嚣，至少很长一段时间都是无冕之王。但很多人对它的诟病，挥之不去的肯定有，不是面向对象，是一种面向过程的编程语言！</p>
 <p>大学学C，但也从来都认为C是一门面向过程的编程语言。但是工作用Python开发后，开始重新思考。为什么以C为底层实现的Python，有底气说是面向对象，方法、函数、变量、类、实例，统统都是对象？有点迷惑！</p>
 <h2 id="基于C的Python底层实现"><a href="#基于C的Python底层实现" class="headerlink" title="基于C的Python底层实现"></a>基于C的Python底层实现</h2><p>翻看Cpython源文件，代码里出现的最多的是C实现的结构体，下面这个结构体最“特别”之一。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">object</span> &#123;</span></span><br><span class="line">    _PyObject_HEAD_EXTRA</span><br><span class="line">    Py_ssize_t ob_refcnt;</span><br><span class="line">    PyTypeObject *ob_type;</span><br><span class="line">&#125; PyObject;</span><br></pre></td></tr></table></figure>
