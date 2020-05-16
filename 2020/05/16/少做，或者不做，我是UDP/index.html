@@ -84,7 +84,7 @@
     </div>
     <hr>
     
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#特点"><span class="toc-text">特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组成"><span class="toc-text">组成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检验和怎么计算"><span class="toc-text">检验和怎么计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发送端"><span class="toc-text">发送端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#接收端"><span class="toc-text">接收端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意"><span class="toc-text">注意</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#特点"><span class="toc-text">特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组成"><span class="toc-text">组成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检验和的计算"><span class="toc-text">检验和的计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发送端"><span class="toc-text">发送端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#接收端"><span class="toc-text">接收端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意"><span class="toc-text">注意</span></a></li></ol>
     
     <div class="picture-container">
       
@@ -100,7 +100,7 @@
 <p>以及一个12字节的伪首部，它包括：</p>
 <p>源IP（4字节）、目标IP（4字节），以及全0字段（1字节）、</p>
 <p>协议字段对应值17（1字节）和用户数据报长度（2字节）。</p>
-<h2 id="检验和怎么计算"><a href="#检验和怎么计算" class="headerlink" title="检验和怎么计算"></a>检验和怎么计算</h2><p>计算单位是16位对象，存在组合和拆散！！！</p>
+<h2 id="检验和的计算"><a href="#检验和的计算" class="headerlink" title="检验和的计算"></a>检验和的计算</h2><p>计算单位是16位对象，存在组合和拆散！！！</p>
 <h2 id="发送端"><a href="#发送端" class="headerlink" title="发送端"></a>发送端</h2><p>全0字段和协议字段对应值17组合成一个计算单位；</p>
 <p>1，UDP首部字段的检验和初始置0；</p>
 <p>2，UDP数据字段如果不是偶数字节，末尾用全0字节代替；</p>
