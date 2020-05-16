@@ -84,7 +84,7 @@
     </div>
     <hr>
     
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#特点"><span class="toc-text">特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组成"><span class="toc-text">组成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检验和这个地方有坑？"><span class="toc-text">检验和这个地方有坑？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检验和怎么计算"><span class="toc-text">检验和怎么计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发送端"><span class="toc-text">发送端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#接收端"><span class="toc-text">接收端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结语"><span class="toc-text">结语</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#特点"><span class="toc-text">特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组成"><span class="toc-text">组成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检验和怎么计算"><span class="toc-text">检验和怎么计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发送端"><span class="toc-text">发送端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#接收端"><span class="toc-text">接收端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意"><span class="toc-text">注意</span></a></li></ol>
     
     <div class="picture-container">
       
@@ -100,14 +100,6 @@
 <p>以及一个12字节的伪首部，它包括：</p>
 <p>源IP（4字节）、目标IP（4字节），以及全0字段（1字节）、</p>
 <p>协议字段对应值17（1字节）和用户数据报长度（2字节）。</p>
-<h2 id="检验和这个地方有坑？"><a href="#检验和这个地方有坑？" class="headerlink" title="检验和这个地方有坑？"></a>检验和这个地方有坑？</h2><p>简单解释一下为什么有坑，伪首部里面的目标IP，如果是UDP单播，那么这个目标IP可以确定。但是，如果广播或者多播呢？</p>
-<p>拿广播举例，需要使用IP主机地址全为255的特定IP，而且最终发送到用户的，即广播发生，是网络层转到链路层（目标主机）的。假设发送端主机地址为2，那么，不可能在传输层循环发送到IP主机地址范围3~254这252个目标主机吧？事实也的确是网络层进行了转发广播，而不是UDP降级到单播模式。</p>
-<p>既然这样，传输层的UDP在计算检验和时，需要用到的目标IP从何处来呢？毕竟广播模式下，传输层只发一份数据给网络层。</p>
-<p>在《TCP/IP详解 卷1：协议》这本书中，关于这部分的描述很模糊，也仅限于：</p>
-<blockquote>
-<p>UDP的检验和是可选的<br>很难知道某个特定系统是否打开了UDP检验和选项</p>
-</blockquote>
-<p>PS：挖坑猜测，多播或者广播这种情况下，检验和并不存在，即以0表示！！！</p>
 <h2 id="检验和怎么计算"><a href="#检验和怎么计算" class="headerlink" title="检验和怎么计算"></a>检验和怎么计算</h2><p>计算单位是16位对象，存在组合和拆散！！！</p>
 <h2 id="发送端"><a href="#发送端" class="headerlink" title="发送端"></a>发送端</h2><p>全0字段和协议字段对应值17组合成一个计算单位；</p>
 <p>1，UDP首部字段的检验和初始置0；</p>
@@ -120,8 +112,7 @@
 <p>如果结果全1，则表示传输无差错，否则，接收端应该丢弃该用户数据报。</p>
 <p>2，检验和为0：</p>
 <p>这种情况，则不进行检验。</p>
-<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>突然觉得，像复杂的浏览器以及操作系统，包括仍不完美的TCP/IP协议或者OSI协议，有些东西能够正常使用，但是时间久远，相信没人能够完全掌握和透析每一步，毕竟这些工程中很多部分，已经历经大半个世纪，而且其中开源部分不在少数。只能说，人类终究被自己打败。</p>
-<p>打败自己的，只有自己。</p>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>伪首部实际不参与传输过程，在发送端只用于临时计算，然后填充到检验和；在接收端只是用来重新计算以进行检验。<br>另外，UDP的检验和是可选的。</p>
 
 
   </article>
