@@ -1,0 +1,194 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="google-site-verification" content="" />
+  
+  <title>RSA算法及公钥登录原理</title>
+  <meta name="author" content="ZouKaihua">
+  <meta name="description" content="邹凯华的写字板，技术，心情分享^_^">
+  
+  
+  <meta property="og:title" content="RSA算法及公钥登录原理"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:site_name" content="ZouKaihua&#39;s Writing Board"/>
+  <link href="/apple-touch-icon-precomposed.png" sizes="180x180" rel="apple-touch-icon-precomposed">
+  <link rel="alternate" href="/atom.xml" title="ZouKaihua&#39;s Writing Board" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/m.min.css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <a id="top"></a>
+  <div id="main">
+    <div class="main-ctnr">
+      <div class="behind">
+  <a href="/" class="back black-color">
+    <svg class="i-close" viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+        <path d="M2 30 L30 2 M30 30 L2 2"></path>
+    </svg>
+  </a>
+  <div class="description">
+    &nbsp;
+  </div>
+</div>
+
+
+  <article class="standard post">
+    <div class="title">
+      
+  
+    <h1 class="page-title center">
+        RSA算法及公钥登录原理
+    </h1>
+  
+
+
+    </div>
+    <div class="meta center">
+      <time datetime="2020-05-21T15:43:37.000Z" itemprop="datePublished">
+  <svg class="i-calendar" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+    <path d="M2 6 L2 30 30 30 30 6 Z M2 15 L30 15 M7 3 L7 9 M13 3 L13 9 M19 3 L19 9 M25 3 L25 9"></path>
+  </svg>
+  &nbsp;
+  2020-05-21
+</time>
+
+
+    
+    &nbsp;
+    <svg class="i-tag" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+      <circle cx="24" cy="8" r="2"></circle>
+      <path d="M2 18 L18 2 30 2 30 14 14 30 Z"></path>
+    </svg>
+    &nbsp;
+    <a href="/categories/安全/">安全</a>·<a href="/categories/安全/算法/">算法</a>
+
+
+
+
+    
+    &nbsp;
+    <svg class="i-tag" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+      <circle cx="24" cy="8" r="2"></circle>
+      <path d="M2 18 L18 2 30 2 30 14 14 30 Z"></path>
+    </svg>
+    &nbsp;
+    <a href="/tags/RSA/">RSA</a>
+
+
+    </div>
+    <hr>
+    
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#原理"><span class="toc-text">原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#密钥关系和生成"><span class="toc-text">密钥关系和生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Python中是怎么做的"><span class="toc-text">Python中是怎么做的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#疑问"><span class="toc-text">疑问</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#公钥登录原理"><span class="toc-text">公钥登录原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意"><span class="toc-text">注意</span></a></li></ol>
+    
+    <div class="picture-container">
+      
+    </div>
+    <h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>RSA是一种非对称公钥加密算法，密钥分为加密密钥和解密密钥。<br>以下原理是数学解释，处理对象是数字，程序或其他工程实际应用中经过了数据加工！</p>
+<p>密文 = 明文 ** E % N</p>
+<p>明文 = 密文 ** D % N</p>
+<h2 id="密钥关系和生成"><a href="#密钥关系和生成" class="headerlink" title="密钥关系和生成"></a>密钥关系和生成</h2><p>N = p * q，其中q和q互质，随机生成的较大质数。</p>
+<p>这里定义一个中间变量L， 它是（p-1）和（q-1）的最小公倍数。</p>
+<p>然后，在1~L之间，找到和L互质的数D，这样的D可能会有多个，选择一个即可。</p>
+<p>在1~L之间，E和D满足关系：E * D % L = 1。</p>
+<p>以上，便找到了E，D，N，完成了密钥对的构建，</p>
+<p>其中（E, N）组成公钥，（D, N）组成私钥。</p>
+<h2 id="Python中是怎么做的"><a href="#Python中是怎么做的" class="headerlink" title="Python中是怎么做的"></a>Python中是怎么做的</h2><p>通过 pip install rsa 即可安装相关RSA算法库</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> rsa</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成密钥对</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gen_rsk_keys</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> rsa.newkeys(<span class="number">128</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 加密</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rsa_encrypt</span><span class="params">(msg, pubkey)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> rsa.encrypt(msg.encode(<span class="string">"utf-8"</span>), pubkey)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 解密</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rsa_decrypt</span><span class="params">(msg, prikey)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> rsa.decrypt(msg, prikey).decode(<span class="string">"utf-8"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    pubkey, prikey = gen_rsk_keys()</span><br><span class="line">    print(<span class="string">"公钥:\n%s\n私钥:\n%s\n"</span> % (pubkey, prikey))</span><br><span class="line"></span><br><span class="line">    msg = rsa_encrypt(<span class="string">"hello"</span>, pubkey)</span><br><span class="line">    print(<span class="string">"密文：\n%s"</span> % msg)</span><br><span class="line">    </span><br><span class="line">    content = rsa_decrypt(msg, prikey)</span><br><span class="line">    print(<span class="string">"明文：\n%s"</span> % content)</span><br></pre></td></tr></table></figure>
+
+<p>运行结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">公钥:</span><br><span class="line">PublicKey(<span class="number">171239075073761526980035505207009674327</span>, <span class="number">65537</span>)</span><br><span class="line">私钥:</span><br><span class="line">PrivateKey(<span class="number">171239075073761526980035505207009674327</span>, <span class="number">65537</span>, <span class="number">18269124508533204071667118085909034113</span>, <span class="number">199306778354616268741</span>, <span class="number">859173363231453547</span>)</span><br><span class="line"></span><br><span class="line">密文：</span><br><span class="line"><span class="string">b'U\n\x90/\xa2\xc7\x83z\xdc\x1f\xfe\xc8YH&amp;\x97'</span></span><br><span class="line">明文：</span><br><span class="line">hello</span><br></pre></td></tr></table></figure>
+
+<p>这里的128，便是用来存储N=p*q的二进制位数，为了防止被轻易破解，一般会将该数设置得大一些。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PublicKey(n, e),  <span class="comment"># 公钥</span></span><br><span class="line">PrivateKey(n, e, d, p, q)  <span class="comment"># 私钥</span></span><br></pre></td></tr></table></figure>
+
+<p>公钥和私钥都可以对数据进行加密和解密，即公钥加密，则私钥解密；私钥加密，则公钥解密。</p>
+<p>因为私钥包含公钥信息，所以一般会对外公开公钥。</p>
+<h2 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h2><p>在Python中，明文hello是如何转变成数值进行加密和解密的？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">encrypt</span><span class="params">(message, pub_key)</span>:</span></span><br><span class="line">    keylength = common.byte_size(pub_key.n)</span><br><span class="line">    padded = _pad_for_encryption(message, keylength)</span><br><span class="line"></span><br><span class="line">    payload = transform.bytes2int(padded)  <span class="comment"># 进行RSA加密前，字符转二进制数据，</span></span><br><span class="line">    encrypted = core.encrypt_int(payload, pub_key.e, pub_key.n)  <span class="comment"># 加密</span></span><br><span class="line">    block = transform.int2bytes(encrypted, keylength)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> block</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">decrypt</span><span class="params">(crypto, priv_key)</span>:</span></span><br><span class="line">    blocksize = common.byte_size(priv_key.n)</span><br><span class="line">    encrypted = transform.bytes2int(crypto)    <span class="comment"># 进行RSA解密前，字符转二进制数据</span></span><br><span class="line">    decrypted = priv_key.blinded_decrypt(encrypted)  <span class="comment"># 解密</span></span><br><span class="line">    cleartext = transform.int2bytes(decrypted, blocksize)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> cleartext[<span class="number">0</span>:<span class="number">2</span>] != <span class="string">b'\x00\x02'</span>:</span><br><span class="line">        <span class="keyword">raise</span> DecryptionError(<span class="string">'Decryption failed'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        sep_idx = cleartext.index(<span class="string">b'\x00'</span>, <span class="number">2</span>)</span><br><span class="line">    <span class="keyword">except</span> ValueError:</span><br><span class="line">        <span class="keyword">raise</span> DecryptionError(<span class="string">'Decryption failed'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> cleartext[sep_idx + <span class="number">1</span>:]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>block = _pad_for_encryption(<span class="string">b'hello'</span>, <span class="number">16</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>len(block)</span><br><span class="line"><span class="number">16</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>block[<span class="number">0</span>:<span class="number">2</span>]</span><br><span class="line"><span class="string">b'\x00\x02'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>block[<span class="number">-6</span>:]</span><br><span class="line"><span class="string">b'\x00hello'</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 加密过程中，_pad_for_encryption(message, keylength)</span><br><span class="line"></span><br><span class="line"># 解密过程中，</span><br><span class="line"># if cleartext[0:2] !&#x3D; b&#39;\x00\x02&#39;:</span><br><span class="line">#     raise DecryptionError(&#39;Decryption failed&#39;)</span><br><span class="line"># </span><br><span class="line">#     try:</span><br><span class="line">#         sep_idx &#x3D; cleartext.index(b&#39;\x00&#39;, 2)</span><br><span class="line">#     except ValueError:</span><br><span class="line">#         raise DecryptionError(&#39;Decryption failed&#39;)</span><br><span class="line"># </span><br><span class="line">#     return cleartext[sep_idx + 1:]</span><br></pre></td></tr></table></figure>
+
+<p>padded是什么？</p>
+<p>个人理解，为什么会有这个中间东西，主要是用来对数据进行增加二次随机性，加强数据安全，这个只是rsa库的第三方做法而已，其他库可能会有其他自定义做法。</p>
+<h2 id="公钥登录原理"><a href="#公钥登录原理" class="headerlink" title="公钥登录原理"></a>公钥登录原理</h2><p><img src="/imgs/2020/05/21/RSA%E7%AE%97%E6%B3%95%E5%8F%8A%E5%85%AC%E9%92%A5%E7%99%BB%E5%BD%95%E5%8E%9F%E7%90%86/%E5%85%AC%E9%92%A5%E7%99%BB%E5%BD%95%E5%8E%9F%E7%90%86.png" alt="img"></p>
+<p>主要通过在客户端生成一对密钥对，然后将公钥内容存到服务器authorized_keys文件中，<br>这样当客户端发送登录请求时，<br>服务器用公钥加密，然后客户端私钥解密，再由客户端私钥加密数据，服务器公钥解密。<br>一来二去，主要是完成数据完整性校验，防止数据发生篡改，以完成正常登录。</p>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>虽然数据是经过加密的，但是这个过程仍是危险的，即存在中间人问题，这也是https需要解决的，有时间说下这部分吧。</p>
+
+
+  </article>
+  <!--</script> bug oops-->
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <div class="busuanzi center">
+    <!--页阅读量:&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;・&nbsp;
+    站访问量:&nbsp;<span id="busuanzi_value_site_pv"></span>&nbsp;・&nbsp;
+    站访客数:&nbsp;<span id="busuanzi_value_site_uv"></span>-->
+  </div>
+
+
+    
+
+
+
+
+
+    </div>
+  </div>
+  <footer class="page-footer"><div class="clearfix">
+</div>
+<div class="right-foot">
+    <div class="firstrow">
+        <a href="#top" target="_self">
+        <svg class="i-caret-right" viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+            <path d="M10 30 L26 16 10 2 Z"></path>
+        </svg>
+        </a>
+        ©ZouKaihua 2020
+    </div>
+    <div class="secondrow">
+        <a href="https://blog.zoukaihua.com" target="_blank" rel="noopener">
+        
+        </a>
+    </div>
+</div>
+<div class="clearfix">
+</div>
+</footer>
+  <script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+// disqus scripts
+
+
+// dropdown scripts
+$(".dropdown").click(function(event) {
+  var current = $(this);
+  event.stopPropagation();
+  $(current).children(".dropdown-content")[($(current).children(".dropdown-content").hasClass("open"))?'removeClass':'addClass']("open")
+});
+$(document).click(function(){
+    $(".dropdown-content").removeClass("open");
+})
+
+
+</script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?be0f3ad84278996689d1d4982c754ca4";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</body>
+</html>
