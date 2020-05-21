@@ -118,6 +118,16 @@
 
 <p>padded是什么？</p>
 <p>个人理解，为什么会有这个中间东西，主要是用来对数据进行增加二次随机性，加强数据安全，这个只是rsa库的第三方做法而已，其他库可能会有其他自定义做法。</p>
+<p>通过 sss-keygen 生成的密钥对为什么是两个文本文件，不是上面说的数字形式？这就是上面提及过的进行了数据加工。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">RSAPrivateKey ::&#x3D; SEQUENCE &#123;</span><br><span class="line">    version           Version,</span><br><span class="line">    modulus           INTEGER,  -- n</span><br><span class="line">    publicExponent    INTEGER,  -- e</span><br><span class="line">    privateExponent   INTEGER,  -- d</span><br><span class="line">    prime1            INTEGER,  -- p</span><br><span class="line">    prime2            INTEGER,  -- q</span><br><span class="line">    exponent1         INTEGER,  -- d mod (p-1)</span><br><span class="line">    exponent2         INTEGER,  -- d mod (q-1)</span><br><span class="line">    coefficient       INTEGER,  -- (inverse of q) mod p</span><br><span class="line">    otherPrimeInfos   OtherPrimeInfos OPTIONAL</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RSAPublicKey ::&#x3D; SEQUENCE &#123;</span><br><span class="line">    modulus           INTEGER,  -- n</span><br><span class="line">    publicExponent    INTEGER   -- e</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-----BEGIN OPENSSH PRIVATE KEY-----</span><br><span class="line">BASE64 ENCODED DATA</span><br><span class="line">-----END OPENSSH PRIVATE KEY-----</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-rsa BASE64 ENCODED DATA zoukaihuaemail@foxmail.com</span><br></pre></td></tr></table></figure>
+
+<p>这是公钥加密标准相关协议下的另一层封装，通过文件形式进行存储，理解上可参考pyc文件，所以平时一般看不到直接数字加密和解密。</p>
 <h2 id="公钥登录原理"><a href="#公钥登录原理" class="headerlink" title="公钥登录原理"></a>公钥登录原理</h2><p><img src="/imgs/2020/05/21/RSA%E7%AE%97%E6%B3%95%E5%8F%8A%E5%85%AC%E9%92%A5%E7%99%BB%E5%BD%95%E5%8E%9F%E7%90%86/%E5%85%AC%E9%92%A5%E7%99%BB%E5%BD%95%E5%8E%9F%E7%90%86.png" alt="img"></p>
 <p>主要通过在客户端生成一对密钥对，然后将公钥内容存到服务器authorized_keys文件中，<br>这样当客户端发送登录请求时，<br>服务器用公钥加密，然后客户端私钥解密，再由客户端私钥加密数据，服务器公钥解密。<br>一来二去，主要是完成数据完整性校验，防止数据发生篡改，以完成正常登录。</p>
 <h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>虽然数据是经过加密的，但是这个过程仍是危险的，即存在中间人问题，这也是https需要解决的，有时间说下这部分吧。</p>
