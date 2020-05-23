@@ -15,15 +15,14 @@
 
 <body>
 	<h1>404 Not Found > <a href="https://blog.zoukaihua.com/" >立即返回首页</a></h1>
-	<p>将在 <span id="mes">10</span> 秒后返回上一页</p> 
-	</div>
+	<p>将在 <span id="mes">10</span> 秒后返回</p>
 </body>
-<script language="javascript" type="text/javascript"> 
+<script type="text/javascript">
 	var i = 10; 
 	var intervalid; 
-	intervalid = setInterval("fun()", 1000); 
+	intervalid = setInterval("fun()", 1000);
 	function fun() { 
-		if (i == 0) {
+		if (i === 0) {
 			window.location.href = document.referrer?document.referrer:"https://blog.zoukaihua.com/"; 
 			clearInterval(intervalid); 
 		} 
