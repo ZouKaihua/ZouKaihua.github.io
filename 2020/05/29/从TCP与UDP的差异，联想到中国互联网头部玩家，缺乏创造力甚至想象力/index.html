@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="google-site-verification" content="" />
+  
+  <title>从TCP与UDP的差异，联想到中国互联网头部玩家，缺乏创造力甚至想象力</title>
+  <meta name="author" content="ZouKaihua">
+  <meta name="description" content="邹凯华的写字板，技术，心情分享^_^">
+  
+  
+  <meta property="og:title" content="从TCP与UDP的差异，联想到中国互联网头部玩家，缺乏创造力甚至想象力"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:site_name" content="ZouKaihua&#39;s Writing Board"/>
+  <link href="/apple-touch-icon-precomposed.png" sizes="180x180" rel="apple-touch-icon-precomposed">
+  <link rel="alternate" href="/atom.xml" title="ZouKaihua&#39;s Writing Board" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/m.min.css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <a id="top"></a>
+  <div id="main">
+    <div class="main-ctnr">
+      <div class="behind">
+  <a href="/" class="back black-color">
+    <svg class="i-close" viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+        <path d="M2 30 L30 2 M30 30 L2 2"></path>
+    </svg>
+  </a>
+  <div class="description">
+    &nbsp;
+  </div>
+</div>
+
+
+  <article class="standard post">
+    <div class="title">
+      
+  
+    <h1 class="page-title center">
+        从TCP与UDP的差异，联想到中国互联网头部玩家，缺乏创造力甚至想象力
+    </h1>
+  
+
+
+    </div>
+    <div class="meta center">
+      <time datetime="2020-05-29T15:22:14.000Z" itemprop="datePublished">
+  <svg class="i-calendar" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+    <path d="M2 6 L2 30 30 30 30 6 Z M2 15 L30 15 M7 3 L7 9 M13 3 L13 9 M19 3 L19 9 M25 3 L25 9"></path>
+  </svg>
+  &nbsp;
+  2020-05-29
+</time>
+
+
+    
+    &nbsp;
+    <svg class="i-tag" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+      <circle cx="24" cy="8" r="2"></circle>
+      <path d="M2 18 L18 2 30 2 30 14 14 30 Z"></path>
+    </svg>
+    &nbsp;
+    <a href="/categories/感悟随笔/">感悟随笔</a>
+
+
+
+
+    
+    &nbsp;
+    <svg class="i-tag" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+      <circle cx="24" cy="8" r="2"></circle>
+      <path d="M2 18 L18 2 30 2 30 14 14 30 Z"></path>
+    </svg>
+    &nbsp;
+    <a href="/tags/传输层/">传输层</a>·<a href="/tags/UDP/">UDP</a>·<a href="/tags/TCP/">TCP</a>
+
+
+    </div>
+    <hr>
+    
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#楔子"><span class="toc-text">楔子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#传输层别话"><span class="toc-text">传输层别话</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#中国互联网"><span class="toc-text">中国互联网</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#些许允悲"><span class="toc-text">些许允悲</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#纯粹做事"><span class="toc-text">纯粹做事</span></a></li></ol>
+    
+    <div class="picture-container">
+      
+    </div>
+    <h2 id="楔子"><a href="#楔子" class="headerlink" title="楔子"></a>楔子</h2><p>为什么是这么一个标题？其实之前只是想总结一下网络传输层的UDP和TCP，但是发现完全没必要，网上关于它们的对比实在太多了，包括特性、差异甚至优劣，不想做背书式的总结，这也不符合再写博客的初衷。具体特性和差异可参看之前两篇博客，<a href="https://blog.zoukaihua.com/2020/05/16/UDP%EF%BC%8C%E5%B0%91%E5%81%9A%EF%BC%8C%E6%88%96%E8%80%85%E4%B8%8D%E5%81%9A/" target="_blank" rel="noopener"> UDP，少做，或者不做 </a>以及 <a href="https://blog.zoukaihua.com/2020/05/17/TCP%EF%BC%8C%E5%A4%9A%E5%81%9A%EF%BC%8C%E6%88%96%E5%81%9A%E6%9B%B4%E5%A4%9A/" target="_blank" rel="noopener">TCP，多做，或做更多</a>。</p>
+<h2 id="传输层别话"><a href="#传输层别话" class="headerlink" title="传输层别话"></a>传输层别话</h2><p>计算机协议是通信双方必须共同遵从的一组约定，约定的一般表现形式就是OSI或者TCP/IP。无论是OSI七层协议模型，还是TCP/IP五（四）层协议模型，都把传输层单独拎出来了，这说明传输层的定义或者划分是相对比较明晰的，我觉得这是受应用场景影响导致。</p>
+<p>计算机网络和现代操作系统等多方选择，使得今天的传输层几乎只能看见TCP和UDP，用仿生的角度来解释一下这个事情。两（多）个人正常对话不会问你是否听到，以及对讲机式的沟通需要得到回复确认，这二者的差异性便是对传输媒介是否信任的表现。因为网络的不确定性，使得基于TCP的应用相对来说多一些，但这并不能说明TCP就优于UDP，更不能通过特性和差异去对比优劣，而是一种对消息是否可达的接受程度表现。实际应用中，更多的是通过它们的特性去实现服务，而不是因为不能综合它们特性去适配服务做无谓指摘，我觉得这是协议带来的局限与开放，差异和统一。边缘实现了局限和统一，内部实现了开放和差异，然后去完成服务的可达、效率和多样。</p>
+<h2 id="中国互联网"><a href="#中国互联网" class="headerlink" title="中国互联网"></a>中国互联网</h2><p>看过类似一句话，佛教发端于印度，繁荣于中国。同样套用到互联网，似乎中国互联网也是一片繁荣，就像<a href="https://blog.zoukaihua.com/2020/04/24/%E5%86%8D%E5%86%99%E5%8D%9A%E5%AE%A2/" target="_blank" rel="noopener">再写博客</a>里类似说的，中国的互联网所代表的年轻和活力，是其他行业不能比拟的。但是，中国互联网的繁荣，只是应用层的狂欢，而这种狂欢，更显示了暗淡甚至危机。</p>
+<p>中国的互联网，发展其实很短。‘中国人离信息高速公路还有多远？向北一千五百米’，这是1995年中国第一家互联网公司瀛海威的广告，感兴趣可以看看《大败局》，吴先生的早期记录文学还是可以看看的。25年，中国人在信息高速公路走得比其他国家似乎都远，在2017年，新四大发明中， 高速铁路、扫码支付、共享单车和网络购物 ，三个就属于互联网范畴，而高速铁路同样也在加入更多的互联网服务。但是，这种互联网应用层的服务，我觉得只是一种表面的虚假繁荣，根本不能和古四大发明相关或对比，我更倾向于称它为一种应用或者服务创新，后面解释为什么只是创新而不是创造和发明。</p>
+<h2 id="些许允悲"><a href="#些许允悲" class="headerlink" title="些许允悲"></a>些许允悲</h2><p>古四大发明， 造纸术、印刷术、指南针、火药，这些都是基础设施，无论是应用还是材料，都是完备的。但是对于互联网，几乎是拿来主义，一方面，是该承认底子薄起步慢，但是另一方面，中国互联网的虚假繁荣是不是该泼泼冷水。真的只是穷怕了，还是有其他原因？</p>
+<p>中国互联网的头部玩家，换了一拨又一拨，迅雷、快播、百度、小黄车，每一次行业转变，似乎也都会有黑马入局，小米、滴滴、今日头条、拼多多，我觉得这些都是搅局的黑马，这是互联网行业的活力，但是，这些也只是服务的创新。淘宝的平台线上化，小米的互联网化，滴滴的共享模式，今日头条的个性化内容搬运，拼多多的深度降维。只是空中楼阁！</p>
+<p>另一方面，中国的互联网史，其实也可以说是抄袭史，但不能委婉说是学习史，因为看不到学习的诚意，只是拿来主义外加本土化，这一块，网上其他博客说的也比较多，这里就不说了。电商是整个中国互联网最具代表性的一块，头部玩家，阿里，当之无愧的第一，整个产品链同样是抄袭，包括王坚感人泪下的事业。在互联网技术方面，阿里也是最具积淀的，而且也成立了达摩院，可是，将一批牛逼的人聚在一起，真的就能做出基础东西，还是说只是换了一个地方办公？至少，从中可以看到一部分中国互联网公司在考虑做基础设施研究，开始造轮子了，是中国互联网的好事。</p>
+<p>为什么我说中国的互联网缺乏想象力，现阶段的移动互联网，基本上可以说是上一阶段互联网的复盘和洗牌，游戏方面早期全是复制，天美的底气是哪来的，奖金？的确，复制成熟可用的模式是比较稳妥和避免停滞的一种方式，但同样也扼杀了想象力，是，靠想象赚不了钱，可那样不就成了腾讯？</p>
+<p>智能手机和平板，不是电脑的替代品，也不会是它的升级版，在移动互联网背景下，它已经成了个人的一个附属部分，没有必要去强调花在它上面的时间和精力，喜欢胶卷相机和纸质书籍，不代表在手机上做这些事就不纯粹。相反，智能手机更像是这些事物的入口。手机相机和电子书等，全部可以通过这么一个入口触及，有什么理由拒绝？应用市场也不只是快手趣步！不否定存在不适合电子阅读者，相反，也存在很多纸质书籍者在表达偏见甚至傲慢。</p>
+<p>移动互联网，服务移动化与移动服务化，前者更多是之前说过的复制，大公司做的不错；后者才是这个阶段互联网的服务创新者，导航、打车、小黄车，这些才应该是这个阶段的特色，却是从小公司做出来的，后都绝大多被招安。还是想说一下内容搬运工起家的字节跳动，加上后来的国民级应用抖音，字节跳动似乎一直保有着一种危机感，从今日头条摊上官司，尤其从内涵段子被封杀后，便极力开始注意去低趣化。而真正想靠情怀做手机的老罗却被逼无奈去直播卖货还钱了， 孙宇晨的良心被狗吃了？</p>
+<p>关于华为，我觉得有点闭门造车，这里说的闭门，指的是不够开放。很多说美国制裁华为就是因为，一个习惯拿来主义的人也要开始自己造车？不行！最后车行不行先不说，先说下造车的这个事吧，值得肯定和继续。就拿操作系统来说，如果不开源，只有死路一条，相反，还更应和同行一起做这个事，形成生态，不管成不成，可这份做事的真诚能从心底感动国人。可现实却和网络舆论基调是两个鲜明对比！</p>
+<h2 id="纯粹做事"><a href="#纯粹做事" class="headerlink" title="纯粹做事"></a>纯粹做事</h2><p>我一直以为，打败房价的，不是降价，而是00或者10后。说不定哪天，韭菜会比羊毛贵，也能更加纯粹地做事情，情怀和理想也同样能像诗里写的那样，而不是老潘口里说的中国人有钱了。</p>
+
+
+  </article>
+  <!--</script> bug oops-->
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <div class="busuanzi center">
+    <!--页阅读量:&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;・&nbsp;
+    站访问量:&nbsp;<span id="busuanzi_value_site_pv"></span>&nbsp;・&nbsp;
+    站访客数:&nbsp;<span id="busuanzi_value_site_uv"></span>-->
+  </div>
+
+
+    
+
+
+
+
+
+    </div>
+  </div>
+  <footer class="page-footer"><div class="clearfix">
+</div>
+<div class="right-foot">
+    <div class="firstrow">
+        <a href="#top" target="_self">
+        <svg class="i-caret-right" viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+            <path d="M10 30 L26 16 10 2 Z"></path>
+        </svg>
+        </a>
+        ©ZouKaihua 2020
+    </div>
+    <div class="secondrow">
+        <a href="https://blog.zoukaihua.com" target="_blank" rel="noopener">
+        
+        </a>
+    </div>
+</div>
+<div class="clearfix">
+</div>
+</footer>
+  <script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+// disqus scripts
+
+
+// dropdown scripts
+$(".dropdown").click(function(event) {
+  var current = $(this);
+  event.stopPropagation();
+  $(current).children(".dropdown-content")[($(current).children(".dropdown-content").hasClass("open"))?'removeClass':'addClass']("open")
+});
+$(document).click(function(){
+    $(".dropdown-content").removeClass("open");
+})
+
+
+</script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?be0f3ad84278996689d1d4982c754ca4";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</body>
+</html>
