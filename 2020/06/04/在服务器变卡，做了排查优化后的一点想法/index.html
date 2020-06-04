@@ -91,7 +91,7 @@
     </div>
     <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>由于是全新项目，项目初期的一些细节不可能完全考虑到，这主要是业务方面的一些新增需求。后期，需要在已有数据统计的基础上，加入点击统计，即对当天访问IP进行去重统计，也就是类似UV统计，这一块统计是来自APP推广页面。</p>
 <h2 id="故事往往是事故"><a href="#故事往往是事故" class="headerlink" title="故事往往是事故"></a>故事往往是事故</h2><p>由于之前统计的第一步数据是注册，但是为了能够将统计功能聚合到一起，同时也不让前端去做任何改变处理，于是，便只在后端完成这块需求。而很快当天IP去重的这种UV统计的需求，也很快就实现上线了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-- 点击统计表（简化）</span><br><span class="line">int_ip  -- 	数字IP</span><br><span class="line">create_date  -- 访问日期</span><br><span class="line">-- 由于二者当天联合去重，加入了联合唯一索引</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-- 点击统计表（简化）</span><br><span class="line">int_ip  -- 	数字IP</span><br><span class="line">create_date  -- 访问日期</span><br></pre></td></tr></table></figure>
 
 <p>根据之前说到的，只在后端更改业务处理，由于之前静态推广页面是有一个关于请求推广信息的接口，而这个接口是访问中必定会发生请求的，便把点击也加到这个处理中去一起做了。加的逻辑处理大概就是，</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if not exists (select id from table where int_ip&#x3D;int_ip and create_date&#x3D;create_date):</span><br><span class="line">　　insert into table</span><br></pre></td></tr></table></figure>
