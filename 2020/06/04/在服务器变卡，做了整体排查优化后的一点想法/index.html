@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="google-site-verification" content="" />
+  
+  <title>在服务器变卡，做了整体排查优化后的一点想法</title>
+  <meta name="author" content="ZouKaihua">
+  <meta name="description" content="邹凯华的写字板，技术，心情分享^_^">
+  
+  
+  <meta property="og:title" content="在服务器变卡，做了整体排查优化后的一点想法"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:site_name" content="ZouKaihua&#39;s Writing Board"/>
+  <link href="/apple-touch-icon-precomposed.png" sizes="180x180" rel="apple-touch-icon-precomposed">
+  <link rel="alternate" href="/atom.xml" title="ZouKaihua&#39;s Writing Board" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/m.min.css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <a id="top"></a>
+  <div id="main">
+    <div class="main-ctnr">
+      <div class="behind">
+  <a href="/" class="back black-color">
+    <svg class="i-close" viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+        <path d="M2 30 L30 2 M30 30 L2 2"></path>
+    </svg>
+  </a>
+  <div class="description">
+    &nbsp;
+  </div>
+</div>
+
+
+  <article class="standard post">
+    <div class="title">
+      
+  
+    <h1 class="page-title center">
+        在服务器变卡，做了整体排查优化后的一点想法
+    </h1>
+  
+
+
+    </div>
+    <div class="meta center">
+      <time datetime="2020-06-04T11:16:08.000Z" itemprop="datePublished">
+  <svg class="i-calendar" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+    <path d="M2 6 L2 30 30 30 30 6 Z M2 15 L30 15 M7 3 L7 9 M13 3 L13 9 M19 3 L19 9 M25 3 L25 9"></path>
+  </svg>
+  &nbsp;
+  2020-06-04
+</time>
+
+
+    
+    &nbsp;
+    <svg class="i-tag" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+      <circle cx="24" cy="8" r="2"></circle>
+      <path d="M2 18 L18 2 30 2 30 14 14 30 Z"></path>
+    </svg>
+    &nbsp;
+    <a href="/categories/服务器/">服务器</a>
+
+
+
+
+    
+    &nbsp;
+    <svg class="i-tag" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+      <circle cx="24" cy="8" r="2"></circle>
+      <path d="M2 18 L18 2 30 2 30 14 14 30 Z"></path>
+    </svg>
+    &nbsp;
+    <a href="/tags/缓存/">缓存</a>·<a href="/tags/异步/">异步</a>
+
+
+    </div>
+    <hr>
+    
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#背景"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#故事往往是事故"><span class="toc-text">故事往往是事故</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发现问题"><span class="toc-text">发现问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#思考问题"><span class="toc-text">思考问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决思路"><span class="toc-text">解决思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#技术选型"><span class="toc-text">技术选型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#再思考"><span class="toc-text">再思考</span></a></li></ol>
+    
+    <div class="picture-container">
+      
+    </div>
+    <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>由于是全新项目，项目初期的一些细节不可能完全考虑到，这主要是业务方面的一些新增需求。后期，需要在已有数据统计的基础上，加入点击统计，即对当天访问IP进行去重统计，也就是类似UV统计，这一块统计是来自APP推广页面。</p>
+<h2 id="故事往往是事故"><a href="#故事往往是事故" class="headerlink" title="故事往往是事故"></a>故事往往是事故</h2><p>由于之前统计的第一步数据是注册，但是为了能够将统计功能聚合到一起，同时也不让前端去做任何改变处理，于是，便只在后端完成这块需求。而很快当天IP去重的这种UV统计的需求，也很快就实现上线了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-- 点击统计表（简化）</span><br><span class="line">int_ip  -- 	数字IP</span><br><span class="line">create_date  -- 访问日期</span><br><span class="line">-- 由于二者当天联合去重，加入了联合唯一索引</span><br></pre></td></tr></table></figure>
+
+<p>根据之前说到的，只在后端更改业务处理，由于之前静态推广页面是有一个关于请求推广信息的接口，而这个接口是访问中必定会发生请求的，便把点击也加到这个处理中去一起做了。加的逻辑处理大概就是，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if not exists (select id from table where int_ip&#x3D;int_ip and create_date&#x3D;create_date):</span><br><span class="line">　　insert into table</span><br></pre></td></tr></table></figure>
+
+<p>上线后几天没什么问题，直到APP开始做大量推广，出问题了。</p>
+<h2 id="发现问题"><a href="#发现问题" class="headerlink" title="发现问题"></a>发现问题</h2><p>做推广活动那天，运营过来抱怨，系统很卡，合作方也反映系统很卡，一时不知道可能是哪块出了问题，但简短思考一会，无非服务器、数据库、代码以及一些其他中间服务，可究竟是哪一块，还不知道。</p>
+<p>进入阿里云网站管理页面，发现CPU居高不下，也就是CPU资源短缺了，登录服务器后。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top -o %CPU</span><br></pre></td></tr></table></figure>
+
+<p>发现mysqld这个进程消耗绝大部分CPU了，也就是说数据库出现问题了。继续查看数据库慢查询日志，发现这段时间产生了很多的慢查询日志。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show full processlist\G;</span><br></pre></td></tr></table></figure>
+
+<p>显示的耗时语句，正是慢查询日志中的语句。由于代码中操作数据库用的是ORM，这条语句对应的代码一时不能知道是哪块，但根据SQL语句实现的功能和表名，便很快定位到。</p>
+<p>点击统计出了问题！</p>
+<h2 id="思考问题"><a href="#思考问题" class="headerlink" title="思考问题"></a>思考问题</h2><p>找到了问题出在哪后，重新思考一下这块业务逻辑。由于是基于之前请求推广信息这条接口做的，而这条接口是一定会请求的，加上大量的MySQL读写冲突，产生大量锁等待，所以资源不消耗才不正常。</p>
+<h2 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h2><p>但一时也不能解决，便先把这块点击统计临时去了，很快系统又恢复了往日的纵享丝滑，服务能够正常访问。</p>
+<p>由于是在已有的请求推广信息接口上加的东西，第一时间便想到了对新加的点击处理做异步，直接使用Celery+Rabbitmq处理了，因为之前已经选用这个组合了。</p>
+<p>此外，还需要考虑读写冲突严重的问题，决定使用Redis做缓存去重处理，但是哪种用数据结构做去重，还没有决定。</p>
+<h2 id="技术选型"><a href="#技术选型" class="headerlink" title="技术选型"></a>技术选型</h2><p>ip+日期，进行去重，redis中set、Bitmaps和HyperLogLog都能处理这类业务。由于运营那边需要这块数据尽可能准确，所以很快排除了有误差统计的HyperLogLog，后面查阅资料，误差大概在0.81%。</p>
+<p>剩下set和Bitmaps，由于是按天，而且当时整体的一个用户注册不到3万，加上前期的数据统计，点击和注册的比例维持在2:1的样子，也就是说这块的访问请求是不会超过10万的。</p>
+<p>根据《Redis开发与运维》的统计，针对上面情况，set所占内存会在800KB左右，而Bitmaps则会处于12.5MB左右的水平。</p>
+<p>所以根据目前的业务情况，最后数据去重选用了set。</p>
+<p>因为Celery+Rabbitmq，是之前的定时任务选用的，为什么没有选用Celery+redis，想着还是应该术业有专攻的，还是想单纯把redis作为缓存来用。</p>
+<p>根据一些消息队列相关的对比博文，综合下来，发现Rabbitmq是比较适合目前的一个业务需求的，Rabbitmq在吞吐量和可靠性等方面没有优势，但也完全满足现在的一个业务量，关键它的实时性属于微秒级，这便成了选它的原因。</p>
+<p>后面也考虑了前端做一些缓存处理，即在第一次请求后当天便保留一个类似标识，随之前请求推广信息接口一起发过来，这样再发请求的话，连异步也不需要处理了。</p>
+<h2 id="再思考"><a href="#再思考" class="headerlink" title="再思考"></a>再思考</h2><p>经过上面的一些思考和代码实现，点击这块重新加上去后，也没有再出问题，但是却对整个项目有了更实际的认识。为什么是实际？</p>
+<p>之前，做单纯的异步处理，可能会想，为什么不直接开一个线程去处理，即使怕资源消耗问题，也可以使用线程池去做，如果后期需要检验处理的结果，可以再加处理逻辑，或使用concurrent这个标准库去做。</p>
+<p>其实，单从异步任务来说，可能并不需要celery+rabbitmq这种看着比较重的组合来做，但是，它能做的不只是异步任务，包括前面提及的定时任务，以及后面业务中用到了延时任务（产品定时上下线）。单一来看，是重了，但是从业务整体来看，是轻了。</p>
+<p>造轮子，是思考问题和实现解决，但如果只是为了能够从无到有的解决问题，而放弃一些市面上已有的一些比较优秀的工具，反而显得有点做重复工作了，这本身也拒绝了开源的集体智慧魅力。阿里的OceanBase、RocketMQ、还是Tengine，无论是思路还是代码，也都不会是从无到有，都或多或少在巨人的肩膀上，去实现自己的个性化需求，而不是完全的造轮子。</p>
+<p>要有造轮子的能力，自己也一直在积淀和前进，但是一般还是不要造轮子。</p>
+
+
+  </article>
+  <!--</script> bug oops-->
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <div class="busuanzi center">
+    <!--页阅读量:&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;・&nbsp;
+    站访问量:&nbsp;<span id="busuanzi_value_site_pv"></span>&nbsp;・&nbsp;
+    站访客数:&nbsp;<span id="busuanzi_value_site_uv"></span>-->
+  </div>
+
+
+    
+
+
+
+
+
+    </div>
+  </div>
+  <footer class="page-footer"><div class="clearfix">
+</div>
+<div class="right-foot">
+    <div class="firstrow">
+        <a href="#top" target="_self">
+        <svg class="i-caret-right" viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+            <path d="M10 30 L26 16 10 2 Z"></path>
+        </svg>
+        </a>
+        ©ZouKaihua 2020
+    </div>
+    <div class="secondrow">
+        <a href="https://blog.zoukaihua.com" target="_blank" rel="noopener">
+        
+        </a>
+    </div>
+</div>
+<div class="clearfix">
+</div>
+</footer>
+  <script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+// disqus scripts
+
+
+// dropdown scripts
+$(".dropdown").click(function(event) {
+  var current = $(this);
+  event.stopPropagation();
+  $(current).children(".dropdown-content")[($(current).children(".dropdown-content").hasClass("open"))?'removeClass':'addClass']("open")
+});
+$(document).click(function(){
+    $(".dropdown-content").removeClass("open");
+})
+
+
+</script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?be0f3ad84278996689d1d4982c754ca4";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</body>
+</html>
